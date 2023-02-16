@@ -1,27 +1,38 @@
-const key = 'c1wtQkATgBL7uih6z5oNax01vsVMQolV';
+class Forecast{
+    constructor(){
+        this.key = 'c1wtQkATgBL7uih6z5oNax01vsVMQolV';
+        this.weatherURI = 'http://dataservice.accuweather.com/currentconditions/v1/';
+        this.cityURI = 'http://dataservice.accuweather.com/locations/v1/cities/search';
+    }
 
-// get weather information
-const getWeather =  async (id) => {
-    const base = 'http://dataservice.accuweather.com/currentconditions/v1/';
-    const query = `${id}?apikey=${key}`;
+    async updateCity(city) {
+        const cityDets = await this.getCity(city);
+    const weather = await this.getWeather(cityDets.Key);
 
-    const response = await fetch(base + query);
-    const data = await response.json();
+    return{cityDets, weather };
+    }
 
-    return data[0];
+    async getCity(city) {
+      
+        const query = `?apikey=${this.key}&q=${city}`;
+    
+        const response = await fetch(this.cityURI + query);
+        const data = await response.json();
+    
+        return data[0];
+    }
+
+    async getWeather(id) {
+       
+        const query = `${id}?apikey=${this.key}`;
+    
+        const response = await fetch(this.weatherURI + query);
+        const data = await response.json();
+    
+        return data[0];
+    }
 }
 
-// get city informattion
-const getCity = async (city) => {
-
-    const base = 'http://dataservice.accuweather.com/locations/v1/cities/search';
-    const query = `?apikey=${key}&q=${city}`;
-
-    const response = await fetch(base + query);
-    const data = await response.json();
-
-    return data[0];
-};
 
 // getCity('jamnagar').then(data => {
 //     return getWeather(data.Key);
